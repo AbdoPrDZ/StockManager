@@ -12,6 +12,10 @@ class BrandsTable extends DataTableComponent {
 
   public function configure(): void {
     $this->setPrimaryKey('id');
+    $this->setTableRowUrl(function($row) {
+      return route('brands.show', $row->id);
+    });
+    $this->setTableRowUrlTarget(fn($row) => '_blank');
   }
 
   public function columns(): array {
@@ -24,18 +28,6 @@ class BrandsTable extends DataTableComponent {
             ->sortable(),
       Column::make('Created At',  'created_at')
             ->sortable(),
-      Column::make('Updated At',  'updated_at')
-            ->sortable(),
-      Column::make('Action')
-            ->label(
-              fn ($row, Column $column) => view('livewire.table_actions')->with(
-                [
-                  'viewLink'   => route('brands.show', $row),
-                  'editLink'   => route('brands.edit.view', $row),
-                  'deleteLink' => route('brands.delete', $row),
-                ]
-              )
-            )->html(),
     ];
   }
 

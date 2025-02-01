@@ -8,7 +8,7 @@
 
 @if ($isTextarea)
   <textarea {{ $disabled ? 'disabled' : '' }} {!! $attributes !!}>
-    {{ $attributes->get('value') }}
+{{ $attributes->get('value') }}
   </textarea>
 @elseif ($isSelect)
   <select {{ $disabled ? 'disabled' : '' }} {!! $attributes !!}>

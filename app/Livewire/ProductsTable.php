@@ -6,12 +6,24 @@ use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
+use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
 
 class ProductsTable extends DataTableComponent {
   protected $model = Product::class;
 
+  public function builder(): Builder {
+    return Product::query()
+                  ->with('brand')
+                  ->select('products.*');
+  }
+
   public function configure(): void {
     $this->setPrimaryKey('id');
+    $this->setTableRowUrl(function($row) {
+      return route('products.show', $row->id);
+    });
+    $this->setTableRowUrlTarget(fn($row) => '_blank');
+    $this->setId('products-table');
   }
 
   public function columns(): array {
@@ -22,10 +34,18 @@ class ProductsTable extends DataTableComponent {
             ->searchable()->sortable(),
       Column::make('Name', 'name')
             ->searchable()->sortable(),
-      Column::make('Brand', 'brand')
-            ->searchable()->sortable()
-            ->label(fn(Product $row, Column $column) => '<a href="' . route('brands.show', $row->id) . '">' . $row->brand_id . '</a>')
+      Column::make('Add To Cart')
+            ->unclickable()
+            ->label(fn ($row, Column $column) => view('livewire.cart-button')->with(['id' => $row->id]))
             ->html(),
+      LinkColumn::make('Brand')
+                ->title(fn($row) => $row->brand->name)
+                ->location(fn($row) => route('brands.show', $row->brand->id))
+                ->searchable(fn(Builder $query, $search) => $query->orWhereHas('brand', fn($query) => $query->where('name', 'like', "%$search%")))
+                ->sortable(fn(Builder $query, $direction) => $query->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+                                                                                      ->orderBy('brands.name', $direction)),
+      Column::make('Stock', 'quantity')
+            ->searchable()->sortable(),
       Column::make('Quantity Carton', 'quantity_box')
             ->searchable()->sortable(),
       Column::make('Quantity Pack', 'quantity_pack')
@@ -36,19 +56,6 @@ class ProductsTable extends DataTableComponent {
             ->searchable()->sortable(),
       Column::make('Created At', 'created_at')
             ->searchable()->sortable(),
-      Column::make('Updated At', 'updated_at')
-            ->searchable()->sortable(),
-      Column::make('Action')
-            ->label(
-              fn ($row, Column $column) => view('livewire.table_actions')->with(
-                [
-                  'viewLink'   => route('products.show', $row),
-                  'editLink'   => route('products.edit.view', $row),
-                  'deleteLink' => route('products.delete', $row),
-                  'addToCart' => $row->id,
-                ]
-              )
-            )->html(),
     ];
   }
 

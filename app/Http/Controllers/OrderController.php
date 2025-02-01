@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller {
@@ -25,45 +26,54 @@ class OrderController extends Controller {
    * Store a newly created resource in storage.
    */
   public function store(Request $request) {
-    $request->merge(['cart', session()->get('cart', [])]);
+    if ($request->has('products')) try {
+      $products = json_decode($request->products, true);
+      $request->merge(['products' => $products]);
+    } catch (\Throwable $th) {
+      //throw $th;
+    }
 
     $request->validate([
-      'reference'         => 'required|min:2|max:255',
-      'cart'              => 'required|array|min:1',
-      'cart.*.product_id' => 'required|exists:products,id',
-      'cart.*.quantity'   => 'required|numeric|min:1',
-      'cart.*.type'       => 'required|in:unit,pack,box',
-      'cart.*.price'      => 'required|numeric|min:0',
+      'reference'           => 'required|min:2|max:255',
+      'products'            => 'required|array|min:1',
+      'products.*.id'       => 'required|exists:products,id',
+      'products.*.quantity' => 'required|numeric|min:1',
+      'products.*.price'    => 'required|numeric|min:0',
+      'products.*.type'     => 'required|in:box,pack,unit',
     ]);
 
-
-    $order = Order::create([
-      'reference'  => $request->reference,
-    ]);
+    $order = Order::create(['reference' => $request->reference]);
 
     $total = 0;
     $profit = 0;
     $net_profit = 0;
 
-    foreach ($request->cart as $productId => $item) {
+    foreach ($request->products as $item) {
+      $product = Product::find($item['id']);
+
+      $purchase_price  = array_key_exists('purchase_price', $item) ? $item['purchase_price'] : $product->purchase_price;
+
+      // TODO:: Check those calculates
+      // ----------------------------------------------------------------
+      $item_total      = $item['quantity'] * $item['price'];
+      $item_profit     = $total - ($purchase_price * $item['quantity']);
+      $item_net_profit = $profit - ($total * 0.03);
+
+      $total      += $item_total;
+      $profit     += $item_profit;
+      $net_profit += $item_net_profit;
+      // ----------------------------------------------------------------
+      
       $order->products()->create([
-        'product_id'     => $productId,
+        'product_id'     => $item['id'],
         'quantity'       => $item['quantity'],
         'type'           => $item['type'],
         'price'          => $item['price'],
-        'purchase_price' => $item['purchase_price'],
-        'total'          => $item['total'],
-        'profit'         => $item['profit'],
-        'net_profit'     => $item['net_profit'],
+        'purchase_price' => $purchase_price,
+        'total'          => $item_total,
+        'profit'         => $item_profit,
+        'net_profit'     => $item_net_profit,
       ]);
-
-      $total      = $item['quantity'] * $item['price'];
-      $profit     = $total - ($item['purchase_price'] * $item['quantity']);
-      $net_profit = $profit - ($total * 0.03);
-
-      $total += $item['total'];
-      $profit += $item['profit'];
-      $net_profit += $item['net_profit'];
     }
 
     $order->update([
@@ -74,7 +84,7 @@ class OrderController extends Controller {
 
     session()->forget('cart');
 
-    return redirect()->route('orders.index')->with('messages', [
+    return redirect()->route('orders')->with('messages', [
       [
         'type' => 'success',
         'message' => 'Order created successfully',

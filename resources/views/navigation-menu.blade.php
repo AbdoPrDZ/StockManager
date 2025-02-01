@@ -38,16 +38,10 @@
 
             <!-- Cart Button -->
             <div class="flex items-center">
-              @php
-                $cart = session()->get('cart', []);
-              @endphp
-              <a href="{{ route('cart') }}" class="relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+              <a href="{{ route('orders.create.view') }}" class="relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
                 <i class="fa-solid fa-cart-shopping"></i>
-                @if ($count = count($cart) > 0)
-                    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full" style="font-size: 0.75rem; padding: 0.25rem;">
-                    {{ $count }}
-                    </span>
-                @endif
+                <span id="cart-count" class="hidden absolute top-0 right-0 inline-flex items-center justify-center px-1 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full" style="font-size: 0.75rem; padding: 0.25rem;">
+                </span>
               </a>
             </div>
 

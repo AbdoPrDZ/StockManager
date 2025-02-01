@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $order_id
@@ -50,9 +50,9 @@ class OrderProduct extends Model {
     'quantity',
     'purchase_price',
     'price',
-    'total',
     'profit',
     'net_profit',
+    'total',
   ];
 
   public function product()   {

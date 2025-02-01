@@ -72,6 +72,7 @@ namespace App\Models{
  * @property int $order_id
  * @property int $product_id
  * @property int $quantity
+ * @property float $purchase_price
  * @property float|null $price
  * @property float $total
  * @property float $profit
@@ -91,6 +92,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct whereProfit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct wherePurchasePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct whereTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderProduct whereType($value)
@@ -130,6 +132,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $quantity
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereQuantity($value)
  */
 	class Product extends \Eloquent {}
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -43,6 +43,7 @@ class Product extends Model {
     'id',
     'reference',
     'name',
+    'quantity',
     'quantity_box',
     'quantity_pack',
     'purchase_price',

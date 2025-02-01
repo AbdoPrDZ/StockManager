@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTables\ProductsDataTable;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -11,7 +10,7 @@ class ProductController extends Controller {
   /**
    * Display a listing of the resource.
    */
-  public function index(ProductsDataTable $dataTable) {
+  public function index() {
     //
   }
 
@@ -29,6 +28,7 @@ class ProductController extends Controller {
     $request->validate([
       'name'           => 'required|min:2|max:255',
       'reference'      => 'required|unique:products,reference',
+      'quantity'       => 'required|integer|min:0',
       'quantity_box'   => 'required|integer|min:0',
       'quantity_pack'  => 'required|integer|min:0',
       'purchase_price' => 'required|numeric|min:0',
@@ -39,6 +39,7 @@ class ProductController extends Controller {
     $product = Product::create([
       'name'           => $request->name,
       'reference'      => $request->reference,
+      'quantity'       => $request->quantity,
       'quantity_box'   => $request->quantity_box,
       'quantity_pack'  => $request->quantity_pack,
       'purchase_price' => $request->purchase_price,
@@ -53,7 +54,15 @@ class ProductController extends Controller {
    * Display the specified resource.
    */
   public function show(Product $product) {
-    //
+    if (request()->wantsJson()) {
+      return response()->json([
+        'success' => true,
+        'message' => 'Product retrieved successfully',
+        'product' => $product,
+      ]);
+    }
+
+    return view('products.show', compact('product'));
   }
 
   /**
@@ -70,6 +79,7 @@ class ProductController extends Controller {
     $request->validate([
       'name'           => 'required|min:2|max:255',
       'reference'      => "required|unique:products,reference,id,$product->id",
+      'quantity'       => 'required|integer|min:0',
       'quantity_box'   => 'required|integer|min:0',
       'quantity_pack'  => 'required|integer|min:0',
       'purchase_price' => 'required|numeric|min:0',
@@ -80,6 +90,7 @@ class ProductController extends Controller {
     $product->update([
       'name'           => $request->name,
       'reference'      => $request->reference,
+      'quantity'       => $request->quantity,
       'quantity_box'   => $request->quantity_box,
       'quantity_pack'  => $request->quantity_pack,
       'purchase_price' => $request->purchase_price,
@@ -95,6 +106,18 @@ class ProductController extends Controller {
    */
   public function destroy(Product $product) {
     //
+  }
+
+  public function image(Product $product) {
+    // TODO: Implement image method
+  }
+
+  public function price(Product $product) {
+    return response()->json([
+      'success' => true,
+      'message' => 'Price retrieved successfully',
+      'price'   => $product->price,
+    ]);
   }
 
 }

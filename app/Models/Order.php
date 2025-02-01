@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $reference
@@ -36,9 +36,9 @@ class Order extends Model {
   protected $fillable = [
     'id',
     'reference',
-    'total',
     'profit',
     'net_profit',
+    'total',
   ];
 
   // public function products() {

@@ -1,3 +1,7 @@
+@php
+  if (isset($product)) $product = \App\Models\Product::find($product);
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -13,37 +17,42 @@
 
                 <div class="form-group">
                   <label for="reference">Product reference</label>
-                  <input type="text" name="reference" id="reference" class="form-control" value="{{ isset($product) ? $product->reference : old('reference') }}" required>
+                  <input type="text" name="reference" id="reference" class="form-control" value="{{ old('reference', isset($product) ? $product->reference : '') }}" required>
                 </div>
 
                 <div class="form-group">
                   <label for="name">Product Name</label>
-                  <input type="text" name="name" id="name" class="form-control" value="{{ isset($product) ? $product->name : old('name') }}" required>
+                  <input type="text" name="name" id="name" class="form-control" value="{{ old('name', isset($product) ? $product->name : '') }}" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="quantity-box">Stock</label>
+                  <input type="number" name="quantity" id="quantity" class="form-control" value="{{ old('quantity', isset($product) ? $product->quantity : '') }}" required>
                 </div>
 
                 <div class="form-group">
                   <label for="quantity-box">Quantity Carton</label>
-                  <input type="number" name="quantity_box" id="quantity-box" class="form-control" value="{{ isset($product) ? $product->quantity_box : old('quantity_box') }}" required>
+                  <input type="number" name="quantity_box" id="quantity-box" class="form-control" value="{{ old('quantity_box', isset($product) ? $product->quantity_box : '') }}" required>
                 </div>
 
                 <div class="form-group">
                   <label for="quantity-pack">Quantity Pack</label>
-                  <input type="number" name="quantity_pack" id="quantity-pack" class="form-control" value="{{ isset($product) ? $product->quantity_pack : old('quantity_pack') }}" required>
+                  <input type="number" name="quantity_pack" id="quantity-pack" class="form-control" value="{{ old('quantity_pack', isset($product) ? $product->quantity_pack : '') }}" required>
                 </div>
 
                 <div class="form-group">
                   <label for="purchase-price">Purchase Price</label>
-                  <input type="number" name="purchase_price" id="purchase-price" class="form-control" value="{{ isset($product) ? $product->purchase_price : old('purchase_price') }}" required>
+                  <input type="number" name="purchase_price" id="purchase-price" class="form-control" value="{{ old('purchase_price', isset($product) ? $product->purchase_price : '') }}" required>
                 </div>
 
                 <div class="form-group">
                   <label for="price">Price</label>
-                  <input type="number" name="price" id="price" class="form-control" value="{{ isset($product) ? $product->price : old('price') }}" required>
+                  <input type="number" name="price" id="price" class="form-control" value="{{ old('price', isset($product) ? $product->price : '') }}" required>
                 </div>
 
                 <div class="form-group">
                   <label for="brand">Brand</label>
-                  <select name="brand_id" id="brand" class="form-control" value="{{ isset($product) ? $product->brand_id : old('brand_id') }}" required>
+                  <select name="brand_id" id="brand" class="form-control" value="{{ old('brand_id', isset($product) ? $product->brand_id : '') }}" required>
                     @foreach (\App\Models\Brand::all() as $brand)
                       <option value="{{$brand->id}}">
                         {{ $brand->name }}
